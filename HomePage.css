@@ -1,0 +1,39 @@
+/* SmartBoard.css */
+
+.smart-board-container {
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  
+  .smart-board-container > div {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .smart-board-container p {
+    margin: 5px 0;
+  }
+  
+  .smart-board-container h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .smart-board-container button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .smart-board-container button:hover {
+    background-color: #2980b9;
+  }
+  
