@@ -1,5 +1,3 @@
-# combined_app.py
-
 import requests
 import tkinter as tk
 from tkinter import Entry, Button, scrolledtext, Toplevel
@@ -10,6 +8,9 @@ from email.mime.multipart import MIMEMultipart
 import smtplib
 import pyttsx3
 
+# Flask server URL
+FLASK_SERVER_URL = 'http://127.0.0.1:5000'
+
 # Global variable to indicate a high decibel alert
 high_decibel_alert = False
 
@@ -18,13 +19,13 @@ def send_alert(message):
     # Open a new window to display the alert message
     alert_window = Toplevel()
     alert_window.title("Alert Window")
-    alert_label = tk.Label(alert_window, text=message, font=('Arial', 16))
-    alert_label.pack(pady=20)
+    alert_label = tk.Label(alert_window, text=message, font=('Arial', 14))
+    alert_label.pack(pady=10)
     # You can customize this window further if needed.
 
 def send_data_to_flask(data):
     try:
-        response = requests.post('http://127.0.0.1:5000//send_data', json=data)
+        response = requests.post(f'{FLASK_SERVER_URL}/send_data', json=data)
         response.raise_for_status()  # Raise an exception for bad responses
         print(response.json())  # Print the response from the server, if needed
     except requests.exceptions.RequestException as e:
@@ -45,20 +46,20 @@ class TextToSpeechApp:
         master.title("Text to Speech and Speech to Text App")
 
         # Text-to-speech components
-        self.text_entry = Entry(master, width=50, font=('Arial', 14))
+        self.text_entry = Entry(master, width=40, font=('Arial', 12))
         self.text_entry.pack(pady=10, padx=10)
 
-        self.button_speak = Button(master, text="Speak Aloud", command=self.speak_aloud)
+        self.button_speak = Button(master, text="Speak Aloud", command=self.speak_aloud, font=('Arial', 12))
         self.button_speak.pack()
 
         # Speech-to-text components
-        self.text_output = scrolledtext.ScrolledText(master, width=60, height=20)
+        self.text_output = scrolledtext.ScrolledText(master, width=50, height=10, font=('Arial', 12))
         self.text_output.pack(pady=10)
 
-        self.label_decibel = tk.Label(master, text="Decibel Level: ")
+        self.label_decibel = tk.Label(master, text="Decibel Level: ", font=('Arial', 12))
         self.label_decibel.pack()
 
-        self.button_start = Button(master, text="Start Speech to Text", command=self.start_speech_to_text)
+        self.button_start = Button(master, text="Start Speech to Text", command=self.start_speech_to_text, font=('Arial', 12))
         self.button_start.pack()
 
         # Pyttsx3 setup for voice alert
@@ -107,7 +108,7 @@ class TextToSpeechApp:
         self.label_decibel.config(text=f"Decibel Level: {decibel_level}")
 
         # Check decibel level and play alert if too high
-        if decibel_level > 1100:  # Adjust this threshold based on your needs
+        if decibel_level > 4000:  # Adjust this threshold based on your needs
             print("Decibel level too high! Keep your voice low.")
             send_alert("Alert sent to: @tutor,@HOD   Message:High decibel alert in Class-A.")
             self.play_alert_message()
@@ -166,7 +167,7 @@ class TextToSpeechApp:
                 self.label_decibel.config(text=f"Decibel Level: {decibel_level}")
 
                 # Check decibel level and play alert if too high
-                if decibel_level > 1100:  # Adjust this threshold based on your needs
+                if decibel_level > 1800:  # Adjust this threshold based on your needs
                     print("Decibel level too high! Keep your voice low.")
                     send_alert("Alert sent to: @tutor,@HOD   Message: High decibel alert in Class-A.")
 
@@ -174,10 +175,11 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = TextToSpeechApp(root)
 
-    # Center the window on the screen
-    window_width = root.winfo_reqwidth()
-    window_height = root.winfo_reqheight()
+    # Adjust the window size for a 5-inch display
+    window_width = 480  # Adjust as needed
+    window_height = 320  # Adjust as needed
     position_right = int(root.winfo_screenwidth() / 2 - window_width / 2)
     position_down = int(root.winfo_screenheight() / 2 - window_height / 2)
-    root.geometry("+{}+{}".format(position_right, position_down))
+    root.geometry("{}x{}+{}+{}".format(window_width, window_height, position_right, position_down))
+
     root.mainloop()
