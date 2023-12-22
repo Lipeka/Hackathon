@@ -161,7 +161,6 @@ class SpeechToTextApp:
         self.is_listening = False  # Set the flag to stop the continuous listening
         self.master.destroy()  # Close the application
 
-
 if __name__ == "__main__":
     root = tk.Tk()
     app = SpeechToTextApp(root)
