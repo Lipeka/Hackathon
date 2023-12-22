@@ -17,7 +17,6 @@ high_decibel_alert = False
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
 
-
 def send_alert(message):
     print(f"ALERT: {message}")
     # Open a new window to display the alert message
@@ -31,7 +30,6 @@ def send_alert(message):
     engine.say("Your voice is too loud. Please keep it down.")
     engine.runAndWait()
 
-
 def send_data_to_flask(data):
     try:
         response = requests.post(f'{FLASK_SERVER_URL}/send_data', json=data)
@@ -39,7 +37,6 @@ def send_data_to_flask(data):
         print(response.json())  # Print the response from the server, if needed
     except requests.exceptions.RequestException as e:
         print(f"Error sending data to Flask server: {e}")
-
 
 class SpeechToTextApp:
     def __init__(self, master):
