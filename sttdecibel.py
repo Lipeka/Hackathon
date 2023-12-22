@@ -6,16 +6,13 @@ import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
-import pyttsx3
+from speak import say  # Import the speak module for text-to-speech
 
 # Flask server URL
 FLASK_SERVER_URL = 'http://127.0.0.1:5000'
 
 # Global variable to indicate a high decibel alert
 high_decibel_alert = False
-
-# Initialize the text-to-speech engine
-engine = pyttsx3.init(driverName='espeak', debug=True, executable='/path/to/espeak')
 
 def send_alert(message):
     print(f"ALERT: {message}")
@@ -24,11 +21,9 @@ def send_alert(message):
     alert_window.title("Alert Window")
     alert_label = tk.Label(alert_window, text=message, font=('Arial', 16))
     alert_label.pack(pady=20)
-    # You can customize this window further if needed.
 
     # Speak the alert message
-    engine.say("Your voice is too loud. Please keep it down.")
-    engine.runAndWait()
+    say("Your voice is too loud. Please keep it down.")
 
 def send_data_to_flask(data):
     try:
@@ -63,6 +58,9 @@ class SpeechToTextApp:
         self.listen_thread = threading.Thread(target=self.listen_continuous)
         self.listen_thread.daemon = True
         self.listen_thread.start()
+
+        # Add an event handler for closing the application
+        master.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def start_speech_to_text(self):
         recognizer = sr.Recognizer()
@@ -138,7 +136,7 @@ class SpeechToTextApp:
 
         with sr.Microphone() as source:
             print("Listening for any voice:")
-            while True:
+            while self.is_listening:  # Run the loop while the flag is True
                 recognizer.adjust_for_ambient_noise(source)
                 audio = recognizer.listen(source)
 
@@ -159,6 +157,10 @@ class SpeechToTextApp:
                     print("Decibel level too high! Keep your voice low.")
                     send_alert("Alert sent to: @tutor,@HOD   Message: High decibel alert in Class-A.")
 
+    def on_close(self):
+        self.is_listening = False  # Set the flag to stop the continuous listening
+        self.master.destroy()  # Close the application
+
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -170,4 +172,6 @@ if __name__ == "__main__":
     position_right = int(root.winfo_screenwidth() / 2 - window_width / 2)
     position_down = int(root.winfo_screenheight() / 2 - window_height / 2)
     root.geometry("+{}+{}".format(position_right, position_down))
+
+    app.is_listening = True  # Set the flag to start continuous listening
     root.mainloop()
