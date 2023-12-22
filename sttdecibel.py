@@ -15,7 +15,7 @@ FLASK_SERVER_URL = 'http://127.0.0.1:5000'
 high_decibel_alert = False
 
 # Initialize the text-to-speech engine
-engine = pyttsx3.init()
+engine = pyttsx3.init(driverName='espeak', debug=True, executable='/path/to/espeak')
 
 def send_alert(message):
     print(f"ALERT: {message}")
