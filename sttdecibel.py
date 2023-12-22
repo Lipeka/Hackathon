@@ -6,7 +6,7 @@ import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
-import pyttsx3  # Import the text-to-speech library
+import pyttsx3
 
 # Flask server URL
 FLASK_SERVER_URL = 'http://127.0.0.1:5000'
@@ -16,6 +16,7 @@ high_decibel_alert = False
 
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
+
 
 def send_alert(message):
     print(f"ALERT: {message}")
@@ -30,6 +31,7 @@ def send_alert(message):
     engine.say("Your voice is too loud. Please keep it down.")
     engine.runAndWait()
 
+
 def send_data_to_flask(data):
     try:
         response = requests.post(f'{FLASK_SERVER_URL}/send_data', json=data)
@@ -37,6 +39,7 @@ def send_data_to_flask(data):
         print(response.json())  # Print the response from the server, if needed
     except requests.exceptions.RequestException as e:
         print(f"Error sending data to Flask server: {e}")
+
 
 class SpeechToTextApp:
     def __init__(self, master):
@@ -92,7 +95,7 @@ class SpeechToTextApp:
         # Check decibel level and play alert if too high
         if decibel_level > 1000:  # Adjust this threshold based on your needs
             print("Decibel level too high! Keep your voice low.")
-            send_alert("Alert sent to: @tutor,@HOD   Message:High decibel alert in Class-A.")
+            send_alert("Alert sent to: @tutor,@HOD   Message: High decibel alert in Class-A.")
             self.play_alert_message()
 
     def play_alert_message(self):
@@ -158,6 +161,7 @@ class SpeechToTextApp:
                 if decibel_level > 1000:  # Adjust this threshold based on your needs
                     print("Decibel level too high! Keep your voice low.")
                     send_alert("Alert sent to: @tutor,@HOD   Message: High decibel alert in Class-A.")
+
 
 if __name__ == "__main__":
     root = tk.Tk()
