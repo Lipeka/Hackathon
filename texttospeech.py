@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import  Button
+from tkinter import Button
 import pyttsx3
 
 class TextToSpeechApp:
@@ -8,7 +8,7 @@ class TextToSpeechApp:
         master.title("Text to Speech App")
 
         # Text-to-speech components
-        self.text_entry = tk.Text(master, width=100, height=25,font=('Arial', 14))
+        self.text_entry = tk.Text(master, width=100, height=25, font=('Arial', 14))
         self.text_entry.pack(pady=10, padx=10)
 
         self.button_speak = Button(master, text="Speak Aloud", command=self.speak_aloud)
@@ -19,7 +19,7 @@ class TextToSpeechApp:
         self.alert_message = "Your voice is too high. Please keep it down."
 
     def speak_aloud(self):
-        text = self.text_entry.get()
+        text = self.text_entry.get("1.0", tk.END)  # Get all the text in the Text widget
         if text:
             self.text_to_speech(text)
 
