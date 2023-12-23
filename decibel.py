@@ -95,7 +95,7 @@ class SpeechToTextApp:
             self.send_alert("Alert sent to: @tutor,@HOD   Message: High decibel alert in Class-A.")
             self.play_alert_message()
 
-    def play_alert_message(self):
+    def play_alert_message(self, message):
         self.set_high_decibel_alert()
 
         # Send email using Brevo
@@ -103,7 +103,7 @@ class SpeechToTextApp:
             sender_email = "lipekadhamodharan@gmail.com"  # Replace with your email
             recipient_email = "no519989@gmail.com"  # Replace with recipient's email
             subject = "High Decibel Alert"
-            body = "High decibel alert in the class. Please take necessary action."
+            body = message  # Set the email body to the alert message
 
             # Brevo email configuration
             brevo_host = "smtp-relay.brevo.com"
@@ -112,18 +112,18 @@ class SpeechToTextApp:
             brevo_password = "Fk90ad1msbpg8HP6"
 
             # Create message
-            message = MIMEMultipart()
-            message["From"] = sender_email
-            message["To"] = recipient_email
-            message["Subject"] = subject
-            message.attach(MIMEText(body, "plain"))
+            email_message = MIMEMultipart()
+            email_message["From"] = sender_email
+            email_message["To"] = recipient_email
+            email_message["Subject"] = subject
+            email_message.attach(MIMEText(body, "plain"))
 
             # Establish a connection to the Brevo SMTP server
             try:
                 with smtplib.SMTP(brevo_host, brevo_port) as server:
                     server.starttls()
                     server.login(brevo_username, brevo_password)
-                    text = message.as_string()
+                    text = email_message.as_string()
                     server.sendmail(sender_email, recipient_email, text)
                     print("Email sent successfully.")
             except Exception as e:
@@ -132,6 +132,29 @@ class SpeechToTextApp:
     def set_high_decibel_alert(self):
         global high_decibel_alert
         high_decibel_alert = True
+
+    def send_alert(self, message):
+        print(f"ALERT: {message}")
+        # Open a new window to display the alert message
+        alert_window = Toplevel()
+        alert_window.title("Alert Window")
+        alert_label = tk.Label(alert_window, text=message, font=('Arial', 16))
+        alert_label.pack(pady=20)
+
+        # Speak the alert message
+        engine.say("Your voice is too loud. Please keep it down.")
+        engine.runAndWait()
+
+        # Send email for the alert
+        self.play_alert_message(message)
+
+    def send_data_to_flask(self, data):
+        try:
+            response = requests.post(f'{FLASK_SERVER_URL}/send_data', json=data)
+            response.raise_for_status()  # Raise an exception for bad responses
+            print(response.json())  # Print the response from the server, if needed
+        except requests.exceptions.RequestException as e:
+            print(f"Error sending data to Flask server: {e}")
 
     def listen_continuous(self):
         recognizer = sr.Recognizer()
